@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>mongilsd</title>
+  <title data-mongil-site-name>Mongil Database</title>
+  <link rel="stylesheet" href="../theme.css" />
   <script>
     (function () {
       const saved = localStorage.getItem("theme");
@@ -13,80 +14,20 @@
     })();
   </script>
   <style>
-    :root {
-      --bg: #fafafa;
-      --surface: #ffffff;
-      --text: #18181b;
-      --muted: #52525b;
-      --border: #e4e4e7;
-      --accent: #2563eb;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #09090b;
-        --surface: #18181b;
-        --text: #f4f4f5;
-        --muted: #a1a1aa;
-        --border: #27272a;
-        --accent: #3b82f6;
-      }
-    }
-
-    :root[data-theme="dark"] {
-      --bg: #09090b;
-      --surface: #18181b;
-      --text: #f4f4f5;
-      --muted: #a1a1aa;
-      --border: #27272a;
-      --accent: #3b82f6;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      transition: background-color 0.2s ease, color 0.2s ease;
-    }
-
-    .container {
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 0 1.25rem;
-    }
-
-    header {
-      border-bottom: 1px solid var(--border);
-      background: var(--surface);
-      padding: 1rem 0;
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
-    }
-
     a {
       color: var(--accent);
       text-decoration: none;
     }
 
+    .nav-left,
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
-    .theme-toggle {
+    .theme-toggle,
+    .sidebar-btn {
       background: var(--bg);
       color: var(--text);
       border: 1px solid var(--border);
@@ -94,6 +35,24 @@
       border-radius: 6px;
       font-size: 0.85rem;
       cursor: pointer;
+    }
+
+    .theme-toggle:hover,
+    .sidebar-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .sidebar-inner {
+      padding: 1.25rem;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .box {
@@ -114,7 +73,10 @@
   <header>
     <div class="container">
       <nav>
-        <a href="/">← Home</a>
+        <div class="nav-left">
+          <button class="sidebar-btn" type="button" data-sidebar-toggle>Menu</button>
+          <a href="../" data-link="home" data-back-to-main>← Main Site</a>
+        </div>
         <div class="nav-right">
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
             Theme
@@ -126,14 +88,62 @@
 
   <main class="container">
     <div class="box">
-      <h1>mongilsd</h1>
-      <p>Live at <code>/mongilsd</code> with shared dark mode.</p>
+      <h1 data-mongil-site-name>Mongil Database</h1>
+      <p data-game-name>Mongil: Star Dive</p>
+      <p data-mongil-subtitle>Game database &amp; notes for Mongil: Star Dive</p>
     </div>
   </main>
 
+  <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+  <aside class="sidebar" data-sidebar aria-hidden="true">
+    <div class="sidebar-inner">
+      <div class="sidebar-header">
+        <strong data-mongil-site-name>Mongil Database</strong>
+        <button class="sidebar-btn" type="button" data-sidebar-close>✕</button>
+      </div>
+      <!-- Sidebar content goes here later -->
+    </div>
+  </aside>
+
+  <script src="../config.js"></script>
+  <script src="./config.js"></script>
   <script>
+    const links = SITE_CONFIG.getLinks();
+    const storageKey = SITE_CONFIG.theme?.storageKey || "theme";
+
+    if (SITE_CONFIG.lang) {
+      document.documentElement.lang = SITE_CONFIG.lang;
+    }
+
+    document.querySelectorAll("[data-mongil-site-name]").forEach((el) => {
+      el.textContent = SITE_CONFIG.mongilSiteName;
+    });
+
+    document.querySelectorAll("[data-game-name]").forEach((el) => {
+      el.textContent = MONGIL_CONFIG.gameName;
+    });
+
+    document.querySelectorAll("[data-mongil-subtitle]").forEach((el) => {
+      el.textContent = MONGIL_CONFIG.subtitle;
+    });
+
+    document.querySelectorAll("[data-back-to-main]").forEach((el) => {
+      el.textContent = MONGIL_CONFIG.labels.backToMain;
+    });
+
+    document.querySelectorAll("[data-link]").forEach((el) => {
+      const key = el.dataset.link;
+      if (links[key]) {
+        el.setAttribute("href", links[key]);
+      }
+    });
+
+    SITE_CONFIG.sidebar.init();
+
     const root = document.documentElement;
     const toggleBtn = document.getElementById("themeToggle");
+    toggleBtn.setAttribute("aria-label", SITE_CONFIG.labels.themeAriaLabel);
 
     function isDarkActive() {
       if (root.dataset.theme === "dark") return true;
@@ -142,15 +152,18 @@
     }
 
     function updateButtonLabel() {
-      toggleBtn.textContent = isDarkActive() ? "Light mode" : "Dark mode";
+      toggleBtn.textContent = isDarkActive()
+        ? SITE_CONFIG.labels.lightMode
+        : SITE_CONFIG.labels.darkMode;
     }
 
+    toggleBtn.textContent = SITE_CONFIG.labels.themeButton;
     updateButtonLabel();
 
     toggleBtn.addEventListener("click", () => {
       const nextTheme = isDarkActive() ? "light" : "dark";
       root.dataset.theme = nextTheme;
-      localStorage.setItem("theme", nextTheme);
+      localStorage.setItem(storageKey, nextTheme);
       updateButtonLabel();
     });
   </script>
