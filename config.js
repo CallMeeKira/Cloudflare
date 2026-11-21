@@ -6,6 +6,65 @@ const SITE_CONFIG = {
   theme: {
     storageKey: "theme"
   },
+  viewport: {
+    breakpoints: {
+      mobileMax: 640,
+      tabletMax: 1024
+    },
+    _overrideMode: "auto", // "auto" | "mobile" | "tablet" | "desktop"
+
+    detectSize() {
+      if (this._overrideMode && this._overrideMode !== "auto") {
+        return this._overrideMode;
+      }
+      const width = window.innerWidth;
+      if (width <= this.breakpoints.mobileMax) return "mobile";
+      if (width <= this.breakpoints.tabletMax) return "tablet";
+      return "desktop";
+    },
+
+    detectDevice() {
+      const width = window.innerWidth;
+      const isCoarsePointer = window.matchMedia("(pointer: coarse)").matches;
+      const maxTouch = navigator.maxTouchPoints || 0;
+      const hasTouch = isCoarsePointer || maxTouch > 0;
+
+      if (width <= this.breakpoints.mobileMax || (hasTouch && width < 768)) {
+        return "phone";
+      }
+      if (hasTouch && width <= this.breakpoints.tabletMax) {
+        return "tablet";
+      }
+      return "desktop";
+    },
+
+    apply() {
+      const root = document.documentElement;
+      const size = this.detectSize();
+      const device = this.detectDevice();
+
+      root.dataset.size = size;
+      root.dataset.device = device;
+      root.dataset.viewportMode = this._overrideMode;
+    },
+
+    setOverride(mode = "auto") {
+      this._overrideMode = mode;
+      this.apply();
+    },
+
+    init() {
+      this.apply();
+      let timer = null;
+      window.addEventListener("resize", () => {
+        window.clearTimeout(timer);
+        timer = window.setTimeout(() => this.apply(), 80);
+      });
+      window.addEventListener("orientationchange", () => {
+        this.apply();
+      });
+    }
+  },
   labels: {
     backToMain: "← Main Site",
     darkMode: "Dark mode",
@@ -33,6 +92,7 @@ const SITE_CONFIG = {
       this._toggles.forEach((btn) => {
         btn.setAttribute("aria-expanded", String(this.isOpen));
       });
+      document.body.style.overflow = this.isOpen ? "hidden" : "";
     },
 
     open() {
