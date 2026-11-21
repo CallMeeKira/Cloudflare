@@ -1,7 +1,7 @@
 const SITE_CONFIG = {
   lang: "en",
-  mainSiteName: "SITENAME",
-  mongilSiteName: "MONGIL_SITENAME",
+  mainSiteName: "Ratticus",
+  mongilSiteName: "Mongil Database",
   footerText: "Built with HTML & CSS on Cloudflare.",
   theme: {
     storageKey: "theme"
