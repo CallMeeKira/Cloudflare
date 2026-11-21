@@ -12,6 +12,29 @@
       --muted: #52525b;
       --border: #e4e4e7;
       --accent: #2563eb;
+      --accent-text: #ffffff;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #09090b;
+        --surface: #18181b;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --border: #27272a;
+        --accent: #3b82f6;
+        --accent-text: #ffffff;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #09090b;
+      --surface: #18181b;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --border: #27272a;
+      --accent: #3b82f6;
+      --accent-text: #ffffff;
     }
 
     * {
@@ -25,6 +48,7 @@
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.6;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     .container {
@@ -43,6 +67,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -50,6 +76,12 @@
       font-size: 1.1rem;
       text-decoration: none;
       color: var(--text);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
     }
 
     .nav-links {
@@ -66,6 +98,20 @@
 
     .nav-links a:hover {
       color: var(--accent);
+    }
+
+    .theme-toggle {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
     }
 
     .hero {
@@ -88,7 +134,7 @@
     .btn {
       display: inline-block;
       background: var(--accent);
-      color: #ffffff;
+      color: var(--accent-text);
       text-decoration: none;
       padding: 0.65rem 1.15rem;
       border-radius: 6px;
@@ -133,11 +179,16 @@
     <div class="container">
       <nav>
         <a class="brand" href="/">My Site</a>
-        <ul class="nav-links">
-          <li><a href="#about">About</a></li>
-          <li><a href="#highlights">Highlights</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
+        <div class="nav-right">
+          <ul class="nav-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#highlights">Highlights</a></li>
+            <li><a href="/sub/page/example">Example</a></li>
+          </ul>
+          <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+            Theme
+          </button>
+        </div>
       </nav>
     </div>
   </header>
@@ -146,8 +197,7 @@
     <section class="hero" id="about">
       <h1>Hi, I'm building something new.</h1>
       <p>
-        This is my simple homepage hosted on Cloudflare. I'm starting small,
-        testing ideas, and shaping the site as it grows.
+        This is my simple homepage hosted on Cloudflare with dark mode support.
       </p>
       <a class="btn" href="#highlights">See what I'm working on</a>
     </section>
@@ -173,5 +223,33 @@
       <p>Built with HTML &amp; CSS on Cloudflare.</p>
     </div>
   </footer>
+
+  <script>
+    const root = document.documentElement;
+    const toggleBtn = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+
+    function isDarkActive() {
+      if (root.dataset.theme === "dark") return true;
+      if (root.dataset.theme === "light") return false;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    function updateButtonLabel() {
+      toggleBtn.textContent = isDarkActive() ? "Light mode" : "Dark mode";
+    }
+
+    if (savedTheme === "dark" || savedTheme === "light") {
+      root.dataset.theme = savedTheme;
+    }
+    updateButtonLabel();
+
+    toggleBtn.addEventListener("click", () => {
+      const nextTheme = isDarkActive() ? "light" : "dark";
+      root.dataset.theme = nextTheme;
+      localStorage.setItem("theme", nextTheme);
+      updateButtonLabel();
+    });
+  </script>
 </body>
 </html>
