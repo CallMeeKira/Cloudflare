@@ -151,7 +151,11 @@ const SITE_CONFIG = {
     }
   },
   getPrefix() {
-    return window.location.pathname.includes("/mongilsd") ? "../" : "./";
+    const path = window.location.pathname;
+    if (path.includes("/mongilsd/tools/calc")) return "../../../";
+    if (path.includes("/mongilsd/tools")) return "../../";
+    if (path.includes("/mongilsd")) return "../";
+    return "./";
   },
   getLinks() {
     const prefix = this.getPrefix();
@@ -159,7 +163,94 @@ const SITE_CONFIG = {
       home: `${prefix}`,
       about: `${prefix}#about`,
       highlights: `${prefix}#highlights`,
-      mongil: `${prefix}mongilsd/`
+      mongil: `${prefix}mongilsd/`,
+      tools: `${prefix}mongilsd/tools/`,
+      calc: `${prefix}mongilsd/tools/calc/`
     };
+  },
+  initThemeToggle(buttonId = "themeToggle") {
+    const toggleBtn = document.getElementById(buttonId);
+    if (!toggleBtn) return;
+
+    const root = document.documentElement;
+    const storageKey = this.theme?.storageKey || "theme";
+    toggleBtn.setAttribute("aria-label", this.labels.themeAriaLabel);
+
+    function isDarkActive() {
+      if (root.dataset.theme === "dark") return true;
+      if (root.dataset.theme === "light") return false;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+
+    const updateButtonLabel = () => {
+      toggleBtn.textContent = isDarkActive()
+        ? this.labels.lightMode
+        : this.labels.darkMode;
+    };
+
+    toggleBtn.textContent = this.labels.themeButton;
+    updateButtonLabel();
+
+    toggleBtn.addEventListener("click", () => {
+      const nextTheme = isDarkActive() ? "light" : "dark";
+      root.dataset.theme = nextTheme;
+      localStorage.setItem(storageKey, nextTheme);
+      updateButtonLabel();
+    });
+  },
+  initPage() {
+    if (this.lang) {
+      document.documentElement.lang = this.lang;
+    }
+
+    document.querySelectorAll("[data-main-site-name]").forEach((el) => {
+      el.textContent = this.mainSiteName;
+    });
+
+    document.querySelectorAll("[data-mongil-site-name]").forEach((el) => {
+      el.textContent = this.mongilSiteName;
+    });
+
+    document.querySelectorAll("[data-footer-text]").forEach((el) => {
+      el.textContent = this.footerText;
+    });
+
+    if (typeof MONGIL_CONFIG !== "undefined") {
+      document.querySelectorAll("[data-game-name]").forEach((el) => {
+        if (MONGIL_CONFIG.gameName) el.textContent = MONGIL_CONFIG.gameName;
+      });
+
+      document.querySelectorAll("[data-mongil-subtitle]").forEach((el) => {
+        if (MONGIL_CONFIG.subtitle) el.textContent = MONGIL_CONFIG.subtitle;
+      });
+
+      document.querySelectorAll("[data-back-to-main]").forEach((el) => {
+        if (MONGIL_CONFIG.labels?.backToMain) el.textContent = MONGIL_CONFIG.labels.backToMain;
+      });
+
+      document.querySelectorAll("[data-back-to-mongil]").forEach((el) => {
+        if (MONGIL_CONFIG.labels?.backToMongil) el.textContent = MONGIL_CONFIG.labels.backToMongil;
+      });
+
+      document.querySelectorAll("[data-back-to-tools]").forEach((el) => {
+        if (MONGIL_CONFIG.labels?.backToTools) el.textContent = MONGIL_CONFIG.labels.backToTools;
+      });
+
+      document.querySelectorAll("[data-sidebar-title]").forEach((el) => {
+        if (MONGIL_CONFIG.labels?.sidebarTitle) el.textContent = MONGIL_CONFIG.labels.sidebarTitle;
+      });
+    }
+
+    const links = this.getLinks();
+    document.querySelectorAll("[data-link]").forEach((el) => {
+      const key = el.dataset.link;
+      if (links[key]) {
+        el.setAttribute("href", links[key]);
+      }
+    });
+
+    this.viewport.init();
+    this.sidebar.init();
+    this.initThemeToggle();
   }
 };

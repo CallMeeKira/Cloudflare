@@ -67,6 +67,10 @@
 
     .sidebar-inner {
       padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      height: 100%;
     }
 
     .sidebar-header {
@@ -74,8 +78,36 @@
       justify-content: space-between;
       align-items: center;
       padding-bottom: 0.75rem;
-      margin-bottom: 1rem;
       border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .sidebar-link {
+      display: block;
+      padding: 0.55rem 0.75rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .sidebar-link:hover {
+      background: var(--bg);
+      color: var(--accent);
+    }
+
+    .sidebar-divider {
+      border-top: 1px solid var(--border);
+      padding-top: 0.75rem;
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
     }
 
     .hero {
@@ -156,9 +188,6 @@
           <li><a href="#highlights" data-link="highlights">Highlights</a></li>
           <li><a href="./mongilsd/" data-link="mongil" data-mongil-site-name>Mongil Database</a></li>
         </ul>
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
-          Theme
-        </button>
       </div>
     </nav>
   </div>
@@ -203,66 +232,23 @@
       <strong data-main-site-name>Ratticus</strong>
       <button class="sidebar-btn" type="button" data-sidebar-close>✕</button>
     </div>
-    <!-- Sidebar content goes here later -->
+    <nav class="sidebar-nav" aria-label="Main navigation">
+      <a class="sidebar-link" href="./" data-link="home">Home</a>
+      <a class="sidebar-link" href="#about" data-link="about">About</a>
+      <a class="sidebar-link" href="#highlights" data-link="highlights">Highlights</a>
+      <a class="sidebar-link" href="./mongilsd/" data-link="mongil" data-mongil-site-name>Mongil Database</a>
+    </nav>
+    <div class="sidebar-divider">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        Theme
+      </button>
+    </div>
   </div>
 </aside>
 
 <script src="./config.js"></script>
 <script>
-  const links = SITE_CONFIG.getLinks();
-  const storageKey = SITE_CONFIG.theme?.storageKey || "theme";
-
-  if (SITE_CONFIG.lang) {
-    document.documentElement.lang = SITE_CONFIG.lang;
-  }
-
-  document.querySelectorAll("[data-main-site-name]").forEach((el) => {
-    el.textContent = SITE_CONFIG.mainSiteName;
-  });
-
-  document.querySelectorAll("[data-mongil-site-name]").forEach((el) => {
-    el.textContent = SITE_CONFIG.mongilSiteName;
-  });
-
-  document.querySelectorAll("[data-footer-text]").forEach((el) => {
-    el.textContent = SITE_CONFIG.footerText;
-  });
-
-  document.querySelectorAll("[data-link]").forEach((el) => {
-    const key = el.dataset.link;
-    if (links[key]) {
-      el.setAttribute("href", links[key]);
-    }
-  });
-
-  SITE_CONFIG.viewport.init();
-  SITE_CONFIG.sidebar.init();
-
-  const root = document.documentElement;
-  const toggleBtn = document.getElementById("themeToggle");
-  toggleBtn.setAttribute("aria-label", SITE_CONFIG.labels.themeAriaLabel);
-
-  function isDarkActive() {
-    if (root.dataset.theme === "dark") return true;
-    if (root.dataset.theme === "light") return false;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-
-  function updateButtonLabel() {
-    toggleBtn.textContent = isDarkActive()
-      ? SITE_CONFIG.labels.lightMode
-      : SITE_CONFIG.labels.darkMode;
-  }
-
-  toggleBtn.textContent = SITE_CONFIG.labels.themeButton;
-  updateButtonLabel();
-
-  toggleBtn.addEventListener("click", () => {
-    const nextTheme = isDarkActive() ? "light" : "dark";
-    root.dataset.theme = nextTheme;
-    localStorage.setItem(storageKey, nextTheme);
-    updateButtonLabel();
-  });
+  SITE_CONFIG.initPage();
 </script>
 </body>
 </html>

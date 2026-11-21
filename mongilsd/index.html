@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title data-mongil-site-name>Mongil Database</title>
   <link rel="stylesheet" href="../theme.css" />
+  <link rel="stylesheet" href="./theme.css" />
   <script>
     (function () {
       const saved = localStorage.getItem("theme");
@@ -13,66 +14,6 @@
       }
     })();
   </script>
-  <style>
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    .nav-left,
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .theme-toggle,
-    .sidebar-btn {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.35rem 0.7rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      cursor: pointer;
-    }
-
-    .theme-toggle:hover,
-    .sidebar-btn:hover {
-      border-color: var(--accent);
-    }
-
-    .sidebar-inner {
-      padding: 1.25rem;
-    }
-
-    .sidebar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 0.75rem;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      margin-top: 2.5rem;
-    }
-
-    :root[data-size="mobile"] .box {
-      padding: 1.15rem;
-      margin-top: 1.5rem;
-    }
-
-    .box p {
-      color: var(--muted);
-      margin-top: 0.5rem;
-    }
-  </style>
 </head>
 <body>
 <header>
@@ -80,98 +21,134 @@
     <nav>
       <div class="nav-left">
         <button class="sidebar-btn" type="button" data-sidebar-toggle>Menu</button>
-        <a href="../" data-link="home" data-back-to-main>← Main Site</a>
+        <a class="hub-brand" href="./" data-mongil-site-name>Mongil Database</a>
       </div>
-      <div class="nav-right">
-        <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
-          Theme
-        </button>
-      </div>
+      <div class="nav-right"></div>
     </nav>
   </div>
 </header>
 
-<main class="container">
-  <div class="box">
-    <h1 data-mongil-site-name>Mongil Database</h1>
-    <p data-game-name>Mongil: Star Dive</p>
-    <p data-mongil-subtitle>Game database &amp; notes for Mongil: Star Dive</p>
-  </div>
+<main class="container" id="overview">
+  <section class="hub-hero">
+    <span class="hub-badge" data-hub-badge>Database Hub</span>
+    <h1 data-hub-title>Mongil Database</h1>
+    <div class="hub-game-title" data-game-name>Mongil: Star Dive</div>
+    <p class="hub-subtitle" data-mongil-subtitle>
+      Game database, guides &amp; quick reference for Mongil: Star Dive.
+    </p>
+  </section>
+
+  <div id="hubSections"></div>
 </main>
+
+<footer>
+  <div class="container">
+    <p data-footer-text>Built with HTML &amp; CSS on Cloudflare.</p>
+  </div>
+</footer>
 
 <div class="sidebar-backdrop" data-sidebar-backdrop></div>
 
 <aside class="sidebar" data-sidebar aria-hidden="true">
   <div class="sidebar-inner">
     <div class="sidebar-header">
-      <strong data-mongil-site-name>Mongil Database</strong>
+      <strong data-sidebar-title>Mongil Hub</strong>
       <button class="sidebar-btn" type="button" data-sidebar-close>✕</button>
     </div>
-    <!-- Sidebar content goes here later -->
+    <nav class="sidebar-nav" id="hubSidebarNav" aria-label="Subdomain navigation"></nav>
+    <div class="sidebar-divider">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+        Theme
+      </button>
+      <a class="sidebar-link" href="../" data-link="home" data-back-to-main>← Main Site</a>
+    </div>
   </div>
 </aside>
 
 <script src="../config.js"></script>
 <script src="./config.js"></script>
 <script>
-  const links = SITE_CONFIG.getLinks();
-  const storageKey = SITE_CONFIG.theme?.storageKey || "theme";
-
-  if (SITE_CONFIG.lang) {
-    document.documentElement.lang = SITE_CONFIG.lang;
+  const badgeEl = document.querySelector("[data-hub-badge]");
+  if (badgeEl && MONGIL_CONFIG.hero?.badge) {
+    badgeEl.textContent = MONGIL_CONFIG.hero.badge;
   }
 
-  document.querySelectorAll("[data-mongil-site-name]").forEach((el) => {
-    el.textContent = SITE_CONFIG.mongilSiteName;
-  });
-
-  document.querySelectorAll("[data-game-name]").forEach((el) => {
-    el.textContent = MONGIL_CONFIG.gameName;
-  });
-
-  document.querySelectorAll("[data-mongil-subtitle]").forEach((el) => {
-    el.textContent = MONGIL_CONFIG.subtitle;
-  });
-
-  document.querySelectorAll("[data-back-to-main]").forEach((el) => {
-    el.textContent = MONGIL_CONFIG.labels.backToMain;
-  });
-
-  document.querySelectorAll("[data-link]").forEach((el) => {
-    const key = el.dataset.link;
-    if (links[key]) {
-      el.setAttribute("href", links[key]);
-    }
-  });
-
-  SITE_CONFIG.viewport.init();
-  SITE_CONFIG.sidebar.init();
-
-  const root = document.documentElement;
-  const toggleBtn = document.getElementById("themeToggle");
-  toggleBtn.setAttribute("aria-label", SITE_CONFIG.labels.themeAriaLabel);
-
-  function isDarkActive() {
-    if (root.dataset.theme === "dark") return true;
-    if (root.dataset.theme === "light") return false;
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const titleEl = document.querySelector("[data-hub-title]");
+  if (titleEl && MONGIL_CONFIG.hero?.title) {
+    titleEl.textContent = MONGIL_CONFIG.hero.title;
   }
 
-  function updateButtonLabel() {
-    toggleBtn.textContent = isDarkActive()
-      ? SITE_CONFIG.labels.lightMode
-      : SITE_CONFIG.labels.darkMode;
+  const sidebarNavEl = document.getElementById("hubSidebarNav");
+  if (sidebarNavEl && Array.isArray(MONGIL_CONFIG.sidebarLinks)) {
+    sidebarNavEl.innerHTML = "";
+    MONGIL_CONFIG.sidebarLinks.forEach((item) => {
+      const a = document.createElement("a");
+      a.className = "sidebar-link";
+      a.href = item.href;
+      a.textContent = item.label;
+      a.addEventListener("click", () => SITE_CONFIG.sidebar.close());
+      sidebarNavEl.appendChild(a);
+    });
   }
 
-  toggleBtn.textContent = SITE_CONFIG.labels.themeButton;
-  updateButtonLabel();
+  const sectionsContainer = document.getElementById("hubSections");
+  if (sectionsContainer && Array.isArray(MONGIL_CONFIG.sections)) {
+    sectionsContainer.innerHTML = "";
+    MONGIL_CONFIG.sections.forEach((sec) => {
+      const sectionEl = document.createElement("section");
+      sectionEl.className = "hub-section";
+      if (sec.id) sectionEl.id = sec.id;
 
-  toggleBtn.addEventListener("click", () => {
-    const nextTheme = isDarkActive() ? "light" : "dark";
-    root.dataset.theme = nextTheme;
-    localStorage.setItem(storageKey, nextTheme);
-    updateButtonLabel();
-  });
+      const headerEl = document.createElement("div");
+      headerEl.className = "hub-section-header";
+
+      const h2 = document.createElement("h2");
+      h2.textContent = sec.title;
+      headerEl.appendChild(h2);
+
+      if (sec.description) {
+        const p = document.createElement("p");
+        p.textContent = sec.description;
+        headerEl.appendChild(p);
+      }
+
+      const gridEl = document.createElement("div");
+      gridEl.className = "hub-grid";
+
+      (sec.cards || []).forEach((card) => {
+        const a = document.createElement("a");
+        a.className = "hub-card";
+        a.href = card.href || "#";
+
+        const topRow = document.createElement("div");
+        topRow.className = "hub-card-top";
+
+        const h3 = document.createElement("h3");
+        h3.textContent = card.title;
+        topRow.appendChild(h3);
+
+        if (card.status) {
+          const tag = document.createElement("span");
+          tag.className = "hub-card-tag";
+          tag.textContent = card.status;
+          topRow.appendChild(tag);
+        }
+
+        const desc = document.createElement("p");
+        desc.textContent = card.summary;
+
+        a.appendChild(topRow);
+        a.appendChild(desc);
+        gridEl.appendChild(a);
+      });
+
+      sectionEl.appendChild(headerEl);
+      sectionEl.appendChild(gridEl);
+      sectionsContainer.appendChild(sectionEl);
+    });
+  }
+
+  SITE_CONFIG.initPage();
 </script>
 </body>
 </html>

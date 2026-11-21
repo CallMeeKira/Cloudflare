@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tools — Mongil Database</title>
+    <link rel="stylesheet" href="../../theme.css" />
+    <link rel="stylesheet" href="../theme.css" />
+    <script>
+        (function () {
+          const saved = localStorage.getItem("theme");
+          if (saved === "dark" || saved === "light") {
+            document.documentElement.dataset.theme = saved;
+          }
+        })();
+    </script>
+</head>
+<body>
+<header>
+    <div class="container">
+        <nav>
+            <div class="nav-left">
+                <button class="sidebar-btn" type="button" data-sidebar-toggle>Menu</button>
+                <a class="hub-brand" href="../">Mongil Database</a>
+            </div>
+            <div class="nav-right"></div>
+        </nav>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hub-hero">
+        <span class="hub-badge">Tools</span>
+        <h1>Mongil Tools</h1>
+        <div class="hub-game-title" data-game-name>Mongil: Star Dive</div>
+        <p class="hub-subtitle">Basic tools hub for quick utilities and calculators.</p>
+    </section>
+
+    <section class="hub-section">
+        <div class="hub-section-header">
+            <h2>Available Tools</h2>
+            <p>Start simple and add more tools as you build them out.</p>
+        </div>
+        <div class="hub-grid">
+            <a class="hub-card" href="./calc/">
+                <div class="hub-card-top">
+                    <h3>Calculator</h3>
+                    <span class="hub-card-tag">Basic</span>
+                </div>
+                <p>Simple starter calculator subpage.</p>
+            </a>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p data-footer-text>Built with HTML &amp; CSS on Cloudflare.</p>
+    </div>
+</footer>
+
+<div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+<aside class="sidebar" data-sidebar aria-hidden="true">
+    <div class="sidebar-inner">
+        <div class="sidebar-header">
+            <strong data-sidebar-title>Mongil Hub</strong>
+            <button class="sidebar-btn" type="button" data-sidebar-close>✕</button>
+        </div>
+        <nav class="sidebar-nav" aria-label="Tools navigation">
+            <a class="sidebar-link" href="../" data-back-to-mongil>← Mongil Hub</a>
+            <a class="sidebar-link" href="./">Tools Home</a>
+            <a class="sidebar-link" href="./calc/">Calculator</a>
+        </nav>
+        <div class="sidebar-divider">
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
+                Theme
+            </button>
+            <a class="sidebar-link" href="../../" data-link="home" data-back-to-main>← Main Site</a>
+        </div>
+    </div>
+</aside>
+
+<script src="../../config.js"></script>
+<script src="../config.js"></script>
+<script>
+    SITE_CONFIG.initPage();
+</script>
+</body>
+</html>
