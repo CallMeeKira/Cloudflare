@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title data-mongil-site-name>MONGIL_SITENAME</title>
+  <title data-mongil-site-name>Mongil Database</title>
   <link rel="stylesheet" href="../theme.css" />
   <script>
     (function () {
@@ -19,13 +19,15 @@
       text-decoration: none;
     }
 
+    .nav-left,
     .nav-right {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
-    .theme-toggle {
+    .theme-toggle,
+    .sidebar-btn {
       background: var(--bg);
       color: var(--text);
       border: 1px solid var(--border);
@@ -33,6 +35,24 @@
       border-radius: 6px;
       font-size: 0.85rem;
       cursor: pointer;
+    }
+
+    .theme-toggle:hover,
+    .sidebar-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .sidebar-inner {
+      padding: 1.25rem;
+    }
+
+    .sidebar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.75rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
     }
 
     .box {
@@ -53,7 +73,10 @@
   <header>
     <div class="container">
       <nav>
-        <a href="../" data-link="home" data-back-to-main>← Main Site</a>
+        <div class="nav-left">
+          <button class="sidebar-btn" type="button" data-sidebar-toggle>Menu</button>
+          <a href="../" data-link="home" data-back-to-main>← Main Site</a>
+        </div>
         <div class="nav-right">
           <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle dark mode">
             Theme
@@ -65,11 +88,23 @@
 
   <main class="container">
     <div class="box">
-      <h1 data-mongil-site-name>MONGIL_SITENAME</h1>
+      <h1 data-mongil-site-name>Mongil Database</h1>
       <p data-game-name>Mongil: Star Dive</p>
       <p data-mongil-subtitle>Game database &amp; notes for Mongil: Star Dive</p>
     </div>
   </main>
+
+  <div class="sidebar-backdrop" data-sidebar-backdrop></div>
+
+  <aside class="sidebar" data-sidebar aria-hidden="true">
+    <div class="sidebar-inner">
+      <div class="sidebar-header">
+        <strong data-mongil-site-name>Mongil Database</strong>
+        <button class="sidebar-btn" type="button" data-sidebar-close>✕</button>
+      </div>
+      <!-- Sidebar content goes here later -->
+    </div>
+  </aside>
 
   <script src="../config.js"></script>
   <script src="./config.js"></script>
@@ -103,6 +138,8 @@
         el.setAttribute("href", links[key]);
       }
     });
+
+    SITE_CONFIG.sidebar.init();
 
     const root = document.documentElement;
     const toggleBtn = document.getElementById("themeToggle");
